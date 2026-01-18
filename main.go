@@ -3,25 +3,30 @@ package main
 import (
 	"image"
 	"image/color"
-	"minecraftRemade/renderer" // Replace 'go-gl-image' with your module name in go.mod
+	"minecraftRemade/renderer" // Ensure this matches your go.mod name
 )
 
-func main() {
-	// 1. Generate an image variable (example: a simple 500x500 blue square)
-	myImage := generateImage(500, 500)
+var offset int
 
-	// 2. Pass it to the renderer
-	renderer.Show(myImage)
+func main() {
+	// The third argument is the callback function that provides each frame
+	renderer.Start(500, 500, updateFrame)
 }
 
-func generateImage(w, h int) image.Image {
-	img := image.NewRGBA(image.Rect(0, 0, w, h))
-	blue := color.RGBA{0, 100, 255, 255}
+func updateFrame() image.Image {
+	img := image.NewRGBA(image.Rect(0, 0, 500, 500))
+	offset++
 
-	// Fill the image with color
-	for x := 0; x < w; x++ {
-		for y := 0; y < h; y++ {
-			img.Set(x, y, blue)
+	// Create a simple moving gradient for testing 60fps
+	for x := 0; x < 500; x++ {
+		for y := 0; y < 500; y++ {
+			c := color.RGBA{
+				R: uint8((x + offset) % 255),
+				G: uint8((y + offset) % 255),
+				B: 150,
+				A: 255,
+			}
+			img.Set(x, y, c)
 		}
 	}
 	return img
